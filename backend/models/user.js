@@ -1,2 +1,1 @@
 const sql = require('../connexiondb');
-
