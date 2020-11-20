@@ -13,14 +13,14 @@ exports.createComment = (req, res, next) => {
     ...createComment,
   //imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   });
-  sequelize.query(`INSERT INTO comments (commentaires,imageUrl) VALUES ('${comment.commentaires}','${comment.imageUrl}')`)
+  sequelize.query(`INSERT INTO comments (text) VALUES ('${comment.text}')`)
     .then(() => res.status(201).json({ message: 'Commentaire enregistré !'}))
     .catch(error => res.status(400).json({ error }));
 };
   
 exports.modifyComment = (req, res, next) => {
   const comment /*Object*/  = req.body
-  sequelize.query(`UPDATE comments SET commentaires='${comment.commentaires}',imageUrl='${comment.imageUrl}' WHERE id= '${req.params.id}'`)
+  sequelize.query(`UPDATE comments SET commentaires='${comment.text}' WHERE id= '${req.params.id}'`)
   //req.file ?
     //{
       //...JSON.parse(req.body.comment),
@@ -30,7 +30,6 @@ exports.modifyComment = (req, res, next) => {
     .then(() => res.status(200).json({ message: 'Commentaire modifié !'}))
     .catch(error => res.status(400).json({ error }));
 };
-
 exports.deleteComment = (req, res, next) => {
   sequelize.query(`DELETE FROM comments WHERE id ='${req.params.id}' `)
     //Comment.findOne({ _id: req.params.id })

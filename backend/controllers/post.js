@@ -12,14 +12,14 @@ exports.createPost = (req, res, next) => {
     ...createPost,
   //imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   });
-  sequelize.query(`INSERT INTO post (titre,imageUrl) VALUES ('${post.titre}','${post.imageUrl}')`)
+  sequelize.query(`INSERT INTO posts(title,image_url) VALUES ('${post.title}','${post.image_url}')`)
     .then(() => res.status(201).json({ message: 'Post enregistré !'}))
     .catch(error => res.status(400).json({ error }));
 };
   
 exports.modifyPost = (req, res, next) => {
   const post /*Object*/= req.body
-  sequelize.query(`UPDATE post SET titre='${post.titre}',imageUrl='${post.imageUrl}' WHERE id= '${req.params.id}'`)
+  sequelize.query(`UPDATE posts SET titre='${post.title}',image_url='${post.imag_url}' WHERE id= '${req.params.id}'`)
   //req.file ?
    // {
       //...JSON.parse(req.body.post),
@@ -31,7 +31,7 @@ exports.modifyPost = (req, res, next) => {
 };
 
 exports.deletePost = (req, res, next) => {
-  sequelize.query(`DELETE FROM post WHERE id ='${req.params.id}' `)
+  sequelize.query(`DELETE FROM posts WHERE id ='${req.params.id}' `)
   //Post.findOne({ _id: req.params.id })
     //.then(post => {
       //const filename = post.imageUrl.split('/images/')[1];
@@ -45,13 +45,13 @@ exports.deletePost = (req, res, next) => {
 };
 
 exports.getOnePost = (req, res, next) => {
-  sequelize.query("SELECT * FROM post")
+  sequelize.query("SELECT * FROM posts")
       .then(post => res.status(200).json(post))
       .catch(error => res.status(404).json({ error }));
   };
 
 exports.getAllPost = (req, res, next) => {
-    sequelize.query("SELECT * FROM post")
+    sequelize.query("SELECT * FROM posts")
        .then(posts => res.status(200).json(posts))
        .catch(error => res.status(400).json({ error }));
    };

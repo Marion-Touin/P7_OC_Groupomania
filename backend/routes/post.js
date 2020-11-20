@@ -7,9 +7,9 @@ const postCtrl = require('../controllers/post');
 const multer = require('../middleware/multer-config');
 
 //créer un post
-router.post('/', multer, postCtrl.createPost);
+router.post('/', postCtrl.createPost);
 //modifier un post
-router.put('/:id', multer, postCtrl.modifyPost);
+router.put('/:id', postCtrl.modifyPost);
 //supprimer un post
 router.delete('/:id', postCtrl.deletePost);
 //affichage d'un post spécifique

@@ -7,9 +7,9 @@ const commentCtrl = require('../controllers/comment');
 const multer = require('../middleware/multer-config');
 
 //créer un post
-router.post('/', multer, commentCtrl.createComment);
+router.post('/', commentCtrl.createComment);
 //modifier un post
-router.put('/:id', multer, commentCtrl.modifyComment);
+router.put('/:id', commentCtrl.modifyComment);
 //supprimer un post
 router.delete('/:id', commentCtrl.deleteComment);
 //affichage d'un post spécifique

@@ -10,11 +10,12 @@ exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
       .then(hash => {
         const user = new User({ 
-          username: req.body.username,
+          firstname : req.body.firstname,
+          lastname: req.body.lastname,
           email: req.body.email,
           password: hash
         });
-        sequelize.query(`INSERT INTO users(username, email, password) VALUES('${user.username}','${user.email}','${user.password}')`)
+        sequelize.query(`INSERT INTO users(firstname, lastname, email, password) VALUES('${user.firstname}','${user.lastname}','${user.email}','${user.password}')`)
           .then(() => res.status(201).json({ message: 'Votre compte à bien été créer !' }))
           .catch(error => res.status(400).json({ error }));
       })
@@ -48,13 +49,13 @@ exports.login = (req, res, next) => {
 
 exports.modifyUser = (req, res, next) => {
   const user = req.body
-  sequelize.query(`UPDATE users SET username='${user.username}',email='${user.email}',password='${user.password}' WHERE id= '${req.params.id}'`)
+  sequelize.query(`UPDATE users SET firstname='${user.firstname}',lastname='${user.lastname}',email='${user.email}',password='${user.password}' WHERE user_id= '${req.params.id}'`)
   .then(() => res.status(200).json({ message: 'Information utilisateur modifié !'}))
   .catch(error => res.status(400).json({ error }));
 };
 
 exports.deleteUser = (req, res, next) => {
-  sequelize.query(`DELETE FROM users WHERE id ='${req.params.id}' `)
+  sequelize.query(`DELETE FROM users WHERE user_id ='${req.params.id}' `)
   .then(() => res.status(200).json({ message: 'Compte supprimé !'}))
   .catch(error => res.status(400).json({ error }));
 };
