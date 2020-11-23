@@ -48,10 +48,19 @@ exports.login = (req, res, next) => {
 };
 
 exports.modifyUser = (req, res, next) => {
-  const user = req.body
-  sequelize.query(`UPDATE users SET firstname='${user.firstname}',lastname='${user.lastname}',email='${user.email}',password='${user.password}' WHERE user_id= '${req.params.id}'`)
-  .then(() => res.status(200).json({ message: 'Information utilisateur modifié !'}))
-  .catch(error => res.status(400).json({ error }));
+  bcrypt.hash(req.body.password, 10)
+    .then(hash => {
+      const user = new User({ 
+        firstname : req.body.firstname,
+        lastname: req.body.lastname,
+        email: req.body.email,
+        password: hash
+      });
+      sequelize.query(`UPDATE users SET firstname='${user.firstname}',lastname='${user.lastname}',email='${user.email}',password='${user.password}' WHERE user_id= '${req.params.id}'`)
+      .then(() => res.status(200).json({ message: 'Information utilisateur modifié !'}))
+        .catch(error => res.status(400).json({ error }));
+    })
+    .catch(error => res.status(500).json({ error }));
 };
 
 exports.deleteUser = (req, res, next) => {
