@@ -5,21 +5,19 @@ const fs = require('fs');
 const jwt = require('jsonwebtoken');
 
 exports.createPost = (req, res, next) => {
-  const createPost = req.body
-  //const postObject = JSON.parse(req.body.post);
-  //delete postObject._id;
+  const postObject = JSON.parse(req.body.Post)
   const post = new Post({
-    ...createPost,
-  //imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    ...postObject,
+  image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   });
-  sequelize.query(`INSERT INTO posts(title,image_url) VALUES ('${post.title}','${post.image_url}')`)
+  sequelize.query(`INSERT INTO posts(userId,title,image_url) VALUES ('${post.userId}','${post.title}','${post.image_url}')`)
     .then(() => res.status(201).json({ message: 'Post enregistré !'}))
     .catch(error => res.status(400).json({ error }));
 };
   
 exports.modifyPost = (req, res, next) => {
   const post /*Object*/= req.body
-  sequelize.query(`UPDATE posts SET titre='${post.title}',image_url='${post.imag_url}' WHERE id= '${req.params.id}'`)
+  sequelize.query(`UPDATE posts SET title='${post.title}',image_url='${post.image_url}' WHERE id= '${req.params.id}'`)
   //req.file ?
    // {
       //...JSON.parse(req.body.post),

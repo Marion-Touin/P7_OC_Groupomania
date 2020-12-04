@@ -3,33 +3,33 @@ const { Sequelize, DataTypes, Model } = require('sequelize');
 const { sequelize } = require('../connexiondb')
 
 module.exports = function(sequelize, DataTypes) {
-    return sequelize.define('post', {
+    return sequelize.define('posts', {
         'post_id':{
             type: DataTypes.INTEGER(11),
             allowNull: false,
             primaryKey : true,
             autoIncrement : true
         },
-        'date':{
+        /*'date':{
+            type: DataTypes.INTEGER(11),
+            allowNull: false
+        },*/
+        'userId':{
             type: DataTypes.INTEGER(11),
             allowNull: false
         },
-        'user_id':{
-            type: DataTypes.INTEGER(11),
-            allowNull: false
-        },
-        'titre':{
+        'title':{
             type: DataTypes.STRING,
             allowNull: false,
             required: true
         },
-        'imageUrl': {
+        'image_url': {
             type: DataTypes.STRING,
             allowNull: false,
             required: true 
         }
     }, {
-        tableName : 'post',
+        tableName : 'posts',
         freezeTableName: true
     });
 };
