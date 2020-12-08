@@ -1,21 +1,13 @@
-const express = require('express');
-const router = express.Router();
+module.exports = app => {
+    const comCtrl = require('../controllers/comment'); 
+    var router = require("express").Router();
+    const auth = require('../middleware/auth');
 
-const Comment = require('../models/comment');
-const auth = require('../middleware/auth');
+    router.post('/', auth, comCtrl.createCom);
+    router.put('/:id', auth, comCtrl.modifyCom);
+    router.delete('/:id',auth, comCtrl.deleteCom);
+    router.get('/:id',auth,  comCtrl.getOneCom)
+    router.get('/', auth, comCtrl.getAllCom);
 
-const commentCtrl = require('../controllers/comment');
-const multer = require('../middleware/multer-config');
-
-//créer un post
-router.post('/', auth, commentCtrl.createComment);
-//modifier un post
-router.put('/:id', auth, commentCtrl.modifyComment);
-//supprimer un post
-router.delete('/:id', auth, commentCtrl.deleteComment);
-//affichage d'un post spécifique
-router.get('/:id', auth, commentCtrl.getOneComment);
-//récupération d'un post
-router.get('/', auth, commentCtrl.getAllComment);
-
-module.exports = router;
+   app.use('/api/comment', router)
+}

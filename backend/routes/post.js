@@ -1,21 +1,24 @@
-const express = require('express');
-const router = express.Router();
-
-const Post = require('../models/post');
-const auth = require('../middleware/auth');
-
-const postCtrl = require('../controllers/post');
+  
 const multer = require('../middleware/multer-config');
+module.exports = app => {
+    var router = require("express").Router();
+    const post = require("../controllers/post.js");
 
-//créer un post
-router.post('/',auth, multer, postCtrl.createPost);
-//modifier un post
-router.put('/:id',auth, multer, postCtrl.modifyPost);
-//supprimer un post
-router.delete('/:id',auth, multer, postCtrl.deletePost);
-//affichage d'un post spécifique
-router.get('/:id',auth, postCtrl.getOnePost);
-//récupération d'un post
-router.get('/',auth, postCtrl.getAllPost);
 
-module.exports = router;
+    const auth = require('../middleware/auth');
+    
+
+
+    //post un article
+    router.post('/', auth, multer, post.createPost)
+    //modifier un article
+    router.put('/:id', auth, multer,post.modifyPost);
+    //supprimer la route
+    router.delete('/:id', auth,post.deletePost);
+    //route pour un article en fonction d'orderId
+    router.get('/:id', auth,post.getOnePost)
+    // route pour tout les articles
+    router.get('/', auth, post.findAll);
+
+   app.use('/api/post', router)
+}

@@ -1,55 +1,104 @@
-const sequelize = require('../connexiondb');
-const { Sequelize, DataTypes } = require('sequelize');
-const Post = require('../models/post')(sequelize, DataTypes);
-const fs = require('fs');
-const jwt = require('jsonwebtoken');
+const db = require("../models/");
+const Posts = db.posts;
+const Op = db.Sequelize.Op;
+
 
 exports.createPost = (req, res, next) => {
-  const postObject = JSON.parse(req.body.Post)
-  const post = new Post({
-    ...postObject,
-  image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-  });
-  sequelize.query(`INSERT INTO posts(userId,title,image_url) VALUES ('${post.userId}','${post.title}','${post.image_url}')`)
-    .then(() => res.status(201).json({ message: 'Post enregistré !'}))
-    .catch(error => res.status(400).json({ error }));
+  const post = {
+    userId: req.body.userId,
+    title: req.body.title,
+    image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+  };
+  Posts.create(post)
+    .then(post => {
+      res.send(post);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Une erreur s'est produite lors de la création de l'article "
+      });
+    });
 };
-  
+
+//modifier le post
 exports.modifyPost = (req, res, next) => {
-  const post /*Object*/= req.body
-  sequelize.query(`UPDATE posts SET title='${post.title}',image_url='${post.image_url}' WHERE id= '${req.params.id}'`)
-  //req.file ?
-   // {
-      //...JSON.parse(req.body.post),
-    //  imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-  // } : { ...req.body };
-  //Post.updateOne({ _id: req.params.id }, { ...postObject, _id: req.params.id })
-    .then(() => res.status(200).json({ message: 'Post modifié !'}))
-    .catch(error => res.status(400).json({ error }));
+  const id = req.params.id;
+  const modification = req.file ? {
+    userId: req.body.userId,
+    title: req.body.title,
+    image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+  } : {    
+    userId: req.body.userId,
+    title: req.body.title,}
+    
+  Posts.update(modification, {
+    where: { id: id }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "L'article est modifié"
+        });
+      } else {
+        res.send({
+          message: `Impossible de mettre à jour l'article avec l'id=${id}.`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "erreur lors de la mise à jour de l'article avec l'id=" + id
+      });
+    });
 };
 
 exports.deletePost = (req, res, next) => {
-  sequelize.query(`DELETE FROM posts WHERE id ='${req.params.id}' `)
-  //Post.findOne({ _id: req.params.id })
-    //.then(post => {
-      //const filename = post.imageUrl.split('/images/')[1];
-      //fs.unlink(`images/${filename}`, () => {
-       // Post.deleteOne({ _id: req.params.id })
-          .then(() => res.status(200).json({ message: 'Post supprimé !'}))
-          .catch(error => res.status(400).json({ error }));
-      //});
-    //})
-    //.catch(error => res.status(500).json({ error }));
+  const id = req.params.id;
+
+  Posts.destroy({
+    where: { id: id }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "Article supprimé!"
+        });
+      } else {
+        res.send({
+          message: `Impossible de supprimer l'article avec l'id=${id}.`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "erreur lors de la suppression de l'article avec l'id=" + id
+      });
+    });
 };
 
 exports.getOnePost = (req, res, next) => {
-  sequelize.query("SELECT * FROM posts")
-      .then(post => res.status(200).json(post))
-      .catch(error => res.status(404).json({ error }));
-  };
+ const id = req.params.id;
+Posts.findByPk(id)
+ .then(data => {
+   res.send(data);
+ })
+ .catch(err => {
+   res.status(500).send({
+     message: "Problème de récupération de l'article avec l'id=" + id
+   });
+ });
+}
 
-exports.getAllPost = (req, res, next) => {
-    sequelize.query("SELECT * FROM posts")
-       .then(posts => res.status(200).json(posts))
-       .catch(error => res.status(400).json({ error }));
-   };
+exports.findAll = (req, res, next) => {
+  Posts.findAll({order: [['updatedAt', "DESC"], ['createdAt', "DESC"]] })
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "erreur lors de la récupération des articles"
+      });
+    });
+};

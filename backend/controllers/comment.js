@@ -1,57 +1,97 @@
+const db = require("../models/");
+const Comments = db.comments;
+const Op = db.Sequelize.Op;
 
-const sequelize = require('../connexiondb');
-const { Sequelize, DataTypes } = require('sequelize');
-const Comment = require('../models/comment')(sequelize, DataTypes);
-const fs = require('fs');
-const jwt = require('jsonwebtoken');
 
-exports.createComment = (req, res, next) => {
-  const createComment = req.body
-  //const postObject = JSON.parse(req.body.post);
-  //delete postObject._id;
-  const comment = new Comment({
-    ...createComment,
-  //imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-  });
-  sequelize.query(`INSERT INTO comments (text) VALUES ('${comment.text}')`)
-    .then(() => res.status(201).json({ message: 'Commentaire enregistré !'}))
-    .catch(error => res.status(400).json({ error }));
-};
-  
-exports.modifyComment = (req, res, next) => {
-  const comment /*Object*/  = req.body
-  sequelize.query(`UPDATE comments SET commentaires='${comment.text}' WHERE id= '${req.params.id}'`)
-  //req.file ?
-    //{
-      //...JSON.parse(req.body.comment),
-      //imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-   // } : { ...req.body };
-  //Comment.updateOne({ _id: req.params.id }, { ...commentObject, _id: req.params.id })
-    .then(() => res.status(200).json({ message: 'Commentaire modifié !'}))
-    .catch(error => res.status(400).json({ error }));
-};
-exports.deleteComment = (req, res, next) => {
-  sequelize.query(`DELETE FROM comments WHERE id ='${req.params.id}' `)
-    //Comment.findOne({ _id: req.params.id })
-    //.then(comment => {
-      //const filename = comment.imageUrl.split('/images/')[1];
-      //fs.unlink(`images/${filename}`, () => {
-        //Comment.deleteOne({ _id: req.params.id })
-          .then(() => res.status(200).json({ message: 'Commentaire supprimé !'}))
-          .catch(error => res.status(400).json({ error }));
-      //});
-    //})
-    //.catch(error => res.status(500).json({ error }));
-};
-
-exports.getOneComment =(req, res, next) => {
-  sequelize.query("SELECT * FROM comments")
-      .then(comment => res.status(200).json(comment))
-      .catch(error => res.status(404).json({ error }));
+exports.createCom = (req, res, next) => {
+  const commentaire = {
+    user_id: req.body.user_id,
+    post_id : req.body.post_id,
+    text: req.body.text,
   };
+  Commentaires.create(commentaire)
+    .then(commentaire => {
+      res.send(commentaire);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Une erreur s'est produite lors de la création du commentaire "
+      });
+    });
+};
 
-exports.getAllComment = (req, res, next) => {
-    sequelize.query("SELECT * FROM comments")
-       .then(comments => res.status(200).json(comments))
-       .catch(error => res.status(400).json({ error }));
-   };
+exports.modifyCom = (req, res, next) => {
+  const id = req.params.id;
+
+  Commentaires.update(req.body, {
+    where: { id: id }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "Le commentaires est modifié."
+        });
+      } else {
+        res.send({
+          message: `Impossible de mettre à jour le commentaires avec l'id=${id}. `
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "erreur lors de la mise à jour du commentaires avec l'id=" + id
+      });
+    });
+};
+
+exports.deleteCom = (req, res, next) => {
+  const id = req.params.id;
+
+  Commentaires.destroy({
+    where: { id: id }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "Commentaire supprimé!"
+        });
+      } else {
+        res.send({
+          message: `Impossible de supprimer le commentaire avec l'id=${id}. `
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Impossible de supprimer le commentaire avec l'id=" + id
+      });
+    });
+};
+
+exports.getOneCom = (req, res, next) => {
+ const id = req.params.id;
+Commentaires.findByPk(id)
+ .then(data => {
+   res.send(data);
+ })
+ .catch(err => {
+   res.status(500).send({
+     message: "Problème de récupération du commentaire avec l'id=" + id
+   });
+ });
+}
+
+exports.getAllCom = (req, res, next) => {
+  Commentaires.findAll({order: [['updatedAt', "DESC"], ['createdAt', "DESC"]] })
+    .then(data => {
+      res.send(data);
+     
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "erreur lors de la récupération des commentaires"
+      });
+    });
+}; 
