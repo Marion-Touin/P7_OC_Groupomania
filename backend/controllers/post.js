@@ -2,7 +2,7 @@ const db = require("../models/");
 const Posts = db.posts;
 const Op = db.Sequelize.Op;
 
-
+//création du post
 exports.createPost = (req, res, next) => {
   const post = {
     userId: req.body.userId,

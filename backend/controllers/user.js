@@ -15,7 +15,6 @@ exports.signup = (req, res, next) => {
   }
   bcrypt.hash(req.body.password, 10)
   .then(hash => {
-    console.log(role)
     const user = {
         firstname: req.body.firstname,
         lastname:req.body.lastname,
@@ -72,21 +71,22 @@ exports.login = (req, res, next) => {
 };
 
 exports.modifyUser = (req, res, next) => {
+  bcrypt.hash(req.body.password, 10)
+  .then(hash => {
   const id = req.params.id;
-  const newProfile = req.file ? {
+  const newProfile = req.body ? {
     firstname: req.body.firstname,
     lastname : req.body.lastname,
     email : req.body.email,
-    password :req.body.password
+    password : hash,
  } : {
   firstname: req.body.firstname,
   lastname : req.body.lastname,
   email : req.body.email,
-  password : req.body.password,
-    }
-    
+  password : hash,
+    } 
   Users.update(newProfile, {
-    where: { id: id }
+    where: { user_id: id }
   })
     .then(num => {
       if (num == 1) {
@@ -104,13 +104,13 @@ exports.modifyUser = (req, res, next) => {
         message: "erreur lors de la mise à jour id=" + id
       });
     });
+  })
 };
 
 exports.deleteUser = (req, res, next) => {
   const id = req.params.id;
-
   Users.destroy({
-    where: { id: id }
+    where: { user_id: id }
   })
     .then(num => {
       if (num == 1) {
