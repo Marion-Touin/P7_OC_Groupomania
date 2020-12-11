@@ -2,14 +2,14 @@ const db = require("../models/");
 const Comments = db.comments;
 const Op = db.Sequelize.Op;
 
-
-exports.createCom = (req, res, next) => {
+//création du commentaire
+exports.createComment = (req, res, next) => {
   const commentaire = {
     user_id: req.body.user_id,
     post_id : req.body.post_id,
     text: req.body.text,
   };
-  Commentaires.create(commentaire)
+  Comments.create(commentaire)
     .then(commentaire => {
       res.send(commentaire);
     })
@@ -21,11 +21,11 @@ exports.createCom = (req, res, next) => {
     });
 };
 
+//modification du commentaire
 exports.modifyCom = (req, res, next) => {
   const id = req.params.id;
-
-  Commentaires.update(req.body, {
-    where: { id: id }
+  Comments.update(req.body, {
+    where: { comment_id: id }
   })
     .then(num => {
       if (num == 1) {
@@ -45,11 +45,12 @@ exports.modifyCom = (req, res, next) => {
     });
 };
 
+//supprimer un commentaire
 exports.deleteCom = (req, res, next) => {
   const id = req.params.id;
 
-  Commentaires.destroy({
-    where: { id: id }
+  Comments.destroy({
+    where: { comment_id: id }
   })
     .then(num => {
       if (num == 1) {
@@ -69,9 +70,10 @@ exports.deleteCom = (req, res, next) => {
     });
 };
 
+//recupération d'un commentaire
 exports.getOneCom = (req, res, next) => {
  const id = req.params.id;
-Commentaires.findByPk(id)
+Comments.findByPk(id)
  .then(data => {
    res.send(data);
  })
@@ -82,8 +84,9 @@ Commentaires.findByPk(id)
  });
 }
 
+//récupération des commentaires
 exports.getAllCom = (req, res, next) => {
-  Commentaires.findAll({order: [['updatedAt', "DESC"], ['createdAt', "DESC"]] })
+  Comments.findAll({order: [['updatedAt', "DESC"], ['createdAt', "DESC"]] })
     .then(data => {
       res.send(data);
      

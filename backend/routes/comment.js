@@ -3,7 +3,7 @@ module.exports = app => {
     var router = require("express").Router();
     const auth = require('../middleware/auth');
 
-    router.post('/', auth, comCtrl.createCom);
+    router.post('/', auth, comCtrl.createComment);
     router.put('/:id', auth, comCtrl.modifyCom);
     router.delete('/:id',auth, comCtrl.deleteCom);
     router.get('/:id',auth,  comCtrl.getOneCom)
