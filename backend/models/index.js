@@ -19,7 +19,7 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.post = require("./post")(sequelize, Sequelize);
+db.post = require("./post.js")(sequelize, Sequelize);
 db.user = require("./user.js")(sequelize, Sequelize);
 db.comments = require('./comment.js')(sequelize,Sequelize);
 

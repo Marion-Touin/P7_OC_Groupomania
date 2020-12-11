@@ -1,5 +1,5 @@
 const db = require("../models/");
-const Posts = db.posts;
+const Posts = db.post;
 const Op = db.Sequelize.Op;
 
 //création du post
@@ -30,10 +30,12 @@ exports.modifyPost = (req, res, next) => {
     image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
   } : {    
     userId: req.body.userId,
-    title: req.body.title,}
+    title: req.body.title,
+    image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+  }
     
   Posts.update(modification, {
-    where: { id: id }
+    where: { post_id: id }
   })
     .then(num => {
       if (num == 1) {
@@ -53,16 +55,16 @@ exports.modifyPost = (req, res, next) => {
     });
 };
 
+//supprimer un post
 exports.deletePost = (req, res, next) => {
   const id = req.params.id;
-
   Posts.destroy({
-    where: { id: id }
+    where: { post_id: id }
   })
     .then(num => {
       if (num == 1) {
         res.send({
-          message: "Article supprimé!"
+          message: "le post à bien été supprimé!"
         });
       } else {
         res.send({
@@ -77,6 +79,7 @@ exports.deletePost = (req, res, next) => {
     });
 };
 
+//récupérer un post
 exports.getOnePost = (req, res, next) => {
  const id = req.params.id;
 Posts.findByPk(id)
@@ -90,6 +93,7 @@ Posts.findByPk(id)
  });
 }
 
+//réupérer tout les posts
 exports.findAll = (req, res, next) => {
   Posts.findAll({order: [['updatedAt', "DESC"], ['createdAt', "DESC"]] })
     .then(data => {
