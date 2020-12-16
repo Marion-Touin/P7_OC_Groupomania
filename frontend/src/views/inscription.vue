@@ -35,7 +35,9 @@
                     password: this.password,
                 })
                 .then((response) => {
-                    console.log(response);
+                    console.log(response)
+                    alert('Votre inscription à bien été enregistré. Vous pouvez à présent vous connecter');
+                    window.location.href = "http://localhost:8080/#/connexion";
                 })
                 .catch( ()=> {
                     console.log('non réussi !');
