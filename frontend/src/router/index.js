@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import connexion from '../views/connexion'
 import inscription from '../views/inscription'
+import accueil from '../components/accueil'
 
 const routes = [
   {
@@ -26,6 +27,11 @@ const routes = [
     path: '/inscription',
     name: 'inscription',
     component: inscription
+  },
+  {
+    path: '/accueil',
+    name: 'accueil',
+    component: accueil
   }
 ]
 
